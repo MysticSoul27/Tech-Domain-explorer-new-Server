@@ -15,7 +15,7 @@ exports.addContributionController = async (req, res) => {
     try {
         const existingContribution = await contributions.findOne({ techName })
         if (existingContribution) {
-            res.status(406).json("You have already made a contribution for the technology already...Please Upload another one")
+            res.status(406).json("You have already made a contribution for the technology with that name either edit it or add with another name...Please Upload another one")
         } else {
             const newContribution = new contributions({
                 techName, learningApp, videoArray, websiteArray, timeTaken, challenges, techImg, note, userId
@@ -35,8 +35,12 @@ exports.userContributionController = async (req, res) => {
     console.log("Inside userContributionController");
     const userId = req.userId
     try {
-        const userContributions = await contributions.find({ userId })
-        res.status(200).json(userContributions)
+        const userApprovedContributions = await contributions.find({ userId,status:"Approved" })
+        const userRejectedContributions = await contributions.find({ userId, status: "Rejected" });
+        res.status(200).json({
+            approved: userApprovedContributions,
+            rejected: userRejectedContributions
+        })
     } catch (error) {
         res.status(401).json(error)
     }
@@ -48,7 +52,7 @@ exports.homeContributionConroller = async (req, res) => {
     console.log("Inside homeContributionController");
 
     try {
-        const homeContributions = await contributions.find().limit(4)
+        const homeContributions = await contributions.find({status: "Approved"}).limit(4)
         res.status(200).json(homeContributions)
     } catch (error) {
         res.status(401).json(error)
@@ -56,30 +60,30 @@ exports.homeContributionConroller = async (req, res) => {
 }
 
 //allContributionController
-exports.allContributionController = async (req, res) => {
-    console.log('Inside allContributionController');
-    const userId = req.userId
-    const searchkey = req.query.search
-    console.log(searchkey);
+// exports.allContributionController = async (req, res) => {
+//     console.log('Inside allContributionController');
+//     const userId = req.userId
+//     const searchkey = req.query.search
+//     console.log(searchkey);
 
-    //console.log(searchkey);
+//     //console.log(searchkey);
 
-    const query = {
-        techName: {
-            $regex: searchkey, $options: 'i'
-        }
-    }
+//     const query = {
+//         techName: {
+//             $regex: searchkey, $options: 'i'
+//         }
+//     }
 
-    try {
-        const allContributions = await contributions.find(query)
-        res.status(200).json(allContributions)
-    } catch (error) {
-        res.status(401).json(error)
-    }
+//     try {
+//         const allContributions = await contributions.find(query)
+//         res.status(200).json(allContributions)
+//     } catch (error) {
+//         res.status(401).json(error)
+//     }
 
-}
+// }
 
-//getContributionByIdController
+//getContributionByIdController based on status
 exports.getContributionByIdController = async (req, res) => {
     console.log("Inside getContributionByIdController");
     const id = req.params.id
@@ -132,7 +136,7 @@ exports.removeController = async (req,res) => {
     }
 }
 
-//getOtherContributionController
+//getOtherContributionController based on status
 exports.getOtherContributionController = async (req,res)=>{
     console.log("Inside getOtherContributionController");
     const userId = req.userId
@@ -140,7 +144,8 @@ exports.getOtherContributionController = async (req,res)=>{
     console.log(searchkey);
     const query = {
         userId: { $ne: userId }, 
-        techName: { $regex: searchkey, $options: "i" } 
+        techName: { $regex: searchkey, $options: "i" },
+        status: "Approved" 
     }
     
     try {
@@ -149,5 +154,37 @@ exports.getOtherContributionController = async (req,res)=>{
     } catch (error) {
         res.status(401).json(error)
     }
+    
+}
+
+//getContributionListController
+exports.getContributionListController = async (req,res)=>{
+    console.log("Inside getContributionListController")
+    try {
+        const contributionList = await contributions.find()
+        res.status(200).json(contributionList)
+    } catch (error) {
+        res.status(401).json(error)
+    }
+    
+}
+
+//updateContributionStatusController 
+exports.updateContributionStatusController = async (req,res) => {
+    console.log("Inside updateContributionStatusController");
+    const {id} = req.params
+
+    const status = req.query.status
+
+    console.log(`Id: ${id}, status:${status}`);
+    try {
+        const existingContribution = await contributions.findById({_id:id})
+        existingContribution.status = status
+        await existingContribution.save()
+        res.status(200).json(existingContribution)
+    } catch (error) {
+        res.status(401).json(error)
+    }
+    
     
 }

@@ -24,7 +24,7 @@ router.get('/user-contributions',jwtMiddleware,techController.userContributionCo
 router.get('/home-contributions',techController.homeContributionConroller)
 
 //get allContributions
-router.get('/all-contributions',jwtMiddleware,techController.allContributionController)
+// router.get('/all-contributions',jwtMiddleware,techController.allContributionController)
 
 //getContributionById
 router.get('/all-contributions/:id',jwtMiddleware,techController.getContributionByIdController)
@@ -39,7 +39,7 @@ router.put('/edit-contribution/:id/edit',jwtMiddleware,multerMiddleware.single('
 router.delete('/contribution/:id/remove',jwtMiddleware,techController.removeController)
 
 //save-contribution
-router.post('/contribution/:id/save',jwtMiddleware,saveController.addToSaveContributionsController)
+router.post('/contribution/:id/save',jwtMiddleware,multerMiddleware.single('note'),saveController.addToSaveContributionsController)
 
 //all-user-saved-contribution
 router.get('/all-user-saved-contribution',jwtMiddleware,saveController.getAllUserSavedContributionsController)
@@ -49,6 +49,19 @@ router.delete('/saved-contribution/:id/remove',jwtMiddleware,saveController.remo
 
 //otherContributions
 router.get('/other-contributions',jwtMiddleware,techController.getOtherContributionController)
+
+//getContributionList
+router.get('/admin/contribution-list',jwtMiddleware,techController.getContributionListController)
+
+//updateContributionStatus
+router.get('/contribution/:id/update',jwtMiddleware,techController.updateContributionStatusController)
+
+//getAllusers
+router.get('/admin/all-users',jwtMiddleware,userController.allUsersController)
+
+//all-saved-contributions
+router.get('/admin/all-saved-contributions',jwtMiddleware,saveController.getAllSavedContributionListController)
+
 
 
 

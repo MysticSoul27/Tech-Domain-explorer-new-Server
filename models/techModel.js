@@ -37,6 +37,11 @@ const techShema = new mongoose.Schema({
     userId:{
         type:String,
         required:true
+    },
+    status:{
+        type:String,
+        required:true,
+        default:"Pending"
     }
 })
 

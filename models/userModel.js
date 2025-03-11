@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema({
     linkedin:{
         type:String,
     },
+    role:{
+        type:String,
+        required:true,
+        default:"user"
+    },
     profilepic:{
         type:String,
     }

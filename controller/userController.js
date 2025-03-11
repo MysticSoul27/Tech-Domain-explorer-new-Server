@@ -63,3 +63,15 @@ exports.updateProfileController = async (req,res)=>{
     }
     
 }
+
+//allUsersController
+exports.allUsersController = async (req,res)=>{
+    console.log("Inside allUsersController");
+    try {
+        const allUsers = await users.find({role:"user"})
+        res.status(200).json(allUsers)
+    } catch (error) {
+        res.status(401).json(error)
+    }
+    
+}
