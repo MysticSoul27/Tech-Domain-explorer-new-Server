@@ -12,7 +12,7 @@ techServer.use(cors())
 techServer.use(router)
 techServer.use('/uploads',express.static('./uploads'))
 
-const PORT = 3000 || process.env.PORT
+const PORT = process.env.PORT || 3000  
 
 techServer.listen(PORT,()=>{
     console.log(`Server Listening for client request through port ${PORT}`);
